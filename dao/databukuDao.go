@@ -13,16 +13,17 @@ func CreateBuku(buku model.Data_buku, db *gorm.DB) model.Return {
 	now := time.Now()
 	now.Format(time.RFC3339)
 	buku.Tanggal_ditambahkan = now.Format("2006-01-02 15:04:05")
+	buku.Kategori = fungsi.CategoryParseEngine(buku.Klasifikasi)
 	var message string
 	var status bool
 	check := db.NewRecord(buku)
 	if check == true {
 		db.Create(&buku)
 		message = "Data Berhasil Ditambahkan"
-		status 	= true
+		status = true
 	} else {
 		message = "Data Gagal Ditambahkan"
-		status  = false
+		status = false
 	}
 
 	return model.Return{Status: status, Data: buku, Message: message}
@@ -35,7 +36,7 @@ func ViewBukuById(id string, db *gorm.DB) model.Return {
 	data := db.Where("buku_id = ?", id).First(&model.Data_buku{})
 	if data.Error != nil {
 		message = "Data Gagal Ditemukan"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil Ditemukan"
@@ -45,7 +46,7 @@ func ViewBukuById(id string, db *gorm.DB) model.Return {
 	return model.Return{Status: status, Data: data.Value, Message: message}
 }
 
-func ListBuku(page model.Paging,db *gorm.DB) model.Return {
+func ListBuku(page model.Paging, db *gorm.DB) model.Return {
 	var message string
 	var status bool
 	var data_bukus []model.Data_buku
@@ -56,16 +57,15 @@ func ListBuku(page model.Paging,db *gorm.DB) model.Return {
 	data := db.Find(&model.Data_buku{})
 	if data.Error != nil {
 		message = "Data Gagal Ditemukan"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil Ditemukan"
 		status = true
 	}
 
-
 	if page.Search == "" {
-		if page.Category == "All"{
+		if page.Category == "All" {
 			DataBase = db
 		} else if page.Category == "" {
 			DataBase = db
@@ -73,7 +73,7 @@ func ListBuku(page model.Paging,db *gorm.DB) model.Return {
 			DataBase = db.Where("kategori LIKE ?", "%"+page.Category+"%")
 		}
 	} else {
-		if page.Category == "All"{
+		if page.Category == "All" {
 			DataBase = db.Where("judul LIKE ?", "%"+page.Search+"%")
 		} else if page.Category == "" {
 			DataBase = db.Where("judul LIKE ?", "%"+page.Search+"%")
@@ -95,11 +95,11 @@ func ListBuku(page model.Paging,db *gorm.DB) model.Return {
 func UpdateBukuById(data_buku model.Data_buku, db *gorm.DB) model.Return {
 	var message string
 	var status bool
-
+	data_buku.Kategori = fungsi.CategoryParseEngine(data_buku.Klasifikasi)
 	data := db.Model(&model.Data_buku{}).Where("buku_id = ?", data_buku.Buku_id).Update(data_buku)
 	if data.Error != nil {
 		message = "Data Gagal DiUpdate"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil DiUpdate"
@@ -109,14 +109,14 @@ func UpdateBukuById(data_buku model.Data_buku, db *gorm.DB) model.Return {
 	return model.Return{Status: status, Data: data.Value, Message: message}
 }
 
-func UpdateStokById(stok model.UpdateStok, db *gorm.DB) model.Return{
+func UpdateStokById(stok model.UpdateStok, db *gorm.DB) model.Return {
 	var message string
 	var status bool
 
-	data := db.Model(&model.Data_buku{}).Where("buku_id = ?", stok.Buku_id).Update(map[string]interface{}{"stok":stok.Stok})
+	data := db.Model(&model.Data_buku{}).Where("buku_id = ?", stok.Buku_id).Update(map[string]interface{}{"stok": stok.Stok})
 	if data.Error != nil {
 		message = "Data Gagal DiUpdate"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil DiUpdate"
@@ -126,14 +126,14 @@ func UpdateStokById(stok model.UpdateStok, db *gorm.DB) model.Return{
 	return model.Return{Status: status, Data: data.Value, Message: message}
 }
 
-func DeleteBukuById(id string, db *gorm.DB) model.Return{
+func DeleteBukuById(id string, db *gorm.DB) model.Return {
 	var message string
 	var status bool
 
 	data := db.Where("buku_id = ?", id).Delete(&model.Data_buku{})
 	if data.Error != nil {
 		message = "Data Gagal DiHapus"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil DiHapus"

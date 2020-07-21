@@ -36,6 +36,7 @@ func main() {
 	mhs.HandleFunc("/update", controller.UpdateMhsById).Methods("PUT")
 	mhs.HandleFunc("/delete/{bukuId}", controller.DeleteMhsById).Methods("DELETE")
 	mhs.HandleFunc("/login", controller.Login).Methods("POST")
+	mhs.HandleFunc("/register", controller.RegisterMhs).Methods("POST")
 
 	peminjaman := api.PathPrefix("/peminjaman").Subrouter()
 	peminjaman.HandleFunc("/pinjam", controller.Pinjam).Methods("POST")

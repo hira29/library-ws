@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"github.com/biezhi/gorm-paginator/pagination"
 	"github.com/jinzhu/gorm"
+	"library-ws/fungsi"
 	"library-ws/model"
+	"time"
 )
 
 func CreateMhs(mhs model.Data_mahasiswa, db *gorm.DB) model.Return {
@@ -15,15 +17,15 @@ func CreateMhs(mhs model.Data_mahasiswa, db *gorm.DB) model.Return {
 		data := db.Create(&mhs)
 		if data.Error != nil {
 			message = "Duplikasi NRP, Data Gagal Ditambahkan"
-			status  = false
+			status = false
 		} else {
 			message = "Data Berhasil Ditambahkan"
-			status 	= true
+			status = true
 		}
 		mhs.Password = "AuthGuard Protected!"
 	} else {
 		message = "Data Gagal Ditambahkan"
-		status  = false
+		status = false
 	}
 
 	return model.Return{Status: status, Data: mhs, Message: message}
@@ -37,7 +39,7 @@ func ViewMhsById(id string, db *gorm.DB) model.Return {
 	data := db.Where("mhs_id = ?", id).First(&model.Data_mahasiswa{})
 	if data.Error != nil {
 		message = "Data Gagal Ditemukan"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil Ditemukan"
@@ -50,7 +52,7 @@ func ViewMhsById(id string, db *gorm.DB) model.Return {
 	return model.Return{Status: status, Data: data.Value, Message: message}
 }
 
-func ListMhs(page model.Paging,db *gorm.DB) model.Return {
+func ListMhs(page model.Paging, db *gorm.DB) model.Return {
 	var message string
 	var status bool
 	var data_mahasiswas []model.Data_mahasiswa
@@ -60,7 +62,7 @@ func ListMhs(page model.Paging,db *gorm.DB) model.Return {
 	data := db.Find(&model.Data_mahasiswa{})
 	if data.Error != nil {
 		message = "Data Gagal Ditemukan"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil Ditemukan"
@@ -70,7 +72,7 @@ func ListMhs(page model.Paging,db *gorm.DB) model.Return {
 	if page.Search == "" {
 		DataBase = db
 	} else {
-		DataBase = db.Where("nama LIKE ? OR mhs_id LIKE ? OR jurusan LIKE ?", "%"+page.Search+"%", "%"+page.Search+"%", "%"+page.Search+"%")
+		DataBase = db.Where("nama LIKE ? OR mhs_id LIKE ?", "%"+page.Search+"%", "%"+page.Search+"%")
 	}
 
 	paginator := pagination.Paging(&pagination.Param{
@@ -100,18 +102,11 @@ func UpdateMhsById(data_mhs model.Data_mahasiswa, db *gorm.DB) model.Return {
 	if data_mhs.Nama != "" {
 		updateData["nama"] = data_mhs.Nama
 	}
-	if data_mhs.Jurusan != "" {
-		updateData["jurusan"] = data_mhs.Jurusan
-	}
-	if data_mhs.Tahun_masuk != "" {
-		updateData["tahun_masuk"] = data_mhs.Tahun_masuk
-	}
-
 
 	data := db.Model(&model.Data_mahasiswa{}).Where("mhs_id = ?", data_mhs.Mhs_id).Update(updateData)
 	if data.Error != nil {
 		message = "Data Gagal DiUpdate"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil DiUpdate"
@@ -121,14 +116,14 @@ func UpdateMhsById(data_mhs model.Data_mahasiswa, db *gorm.DB) model.Return {
 	return model.Return{Status: status, Data: data.Value, Message: message}
 }
 
-func DeleteMhsById(id string, db *gorm.DB) model.Return{
+func DeleteMhsById(id string, db *gorm.DB) model.Return {
 	var message string
 	var status bool
 
 	data := db.Where("mhs_id = ?", id).Delete(&model.Data_mahasiswa{})
 	if data.Error != nil {
 		message = "Data Gagal DiHapus"
-		status 	= false
+		status = false
 		data.Value = nil
 	} else {
 		message = "Data Berhasil DiHapus"
@@ -143,17 +138,68 @@ func Login(id string, password string, db *gorm.DB) model.Return {
 	var status bool
 	var mhsInterface model.Data_mahasiswa
 
-	data := db.Where("mhs_id = ? AND password = ?", id, password).Find(&model.Data_mahasiswa{})
-	if data.Error != nil {
-		message = "Username atau password salah"
-		status 	= false
-		data.Value = nil
+	check := db.Where("mhs_id = ?", id).Find(&model.Data_mahasiswa{})
+	if check.Error != nil {
+		message = "Akun tidak ditemukan"
+		status = false
+		check.Value = nil
 	} else {
-		message = "Anda berhasil Login"
-		status = true
-		setCord, _ := json.Marshal(data.Value)
-		_ = json.Unmarshal(setCord, &mhsInterface)
-		mhsInterface.Password = "AuthGuard Protected!"
+		data := db.Where("mhs_id = ? AND password = ?", id, password).Find(&model.Data_mahasiswa{})
+		if data.Error != nil {
+			message = "Username atau password salah"
+			status = false
+			data.Value = nil
+		} else {
+			message = "Anda berhasil Login"
+			status = true
+			setCord, _ := json.Marshal(data.Value)
+			_ = json.Unmarshal(setCord, &mhsInterface)
+			if mhsInterface.Active == 0 {
+				status = false
+				message = "Akun anda belum aktif!"
+				mhsInterface.Nama = ""
+				mhsInterface.Tempat_lahir = ""
+				mhsInterface.Tanggal_lahir = time.Now()
+				mhsInterface.Email = ""
+			} else {
+				mhsInterface.Password = "AuthGuard Protected!"
+			}
+		}
 	}
+
 	return model.Return{Status: status, Data: mhsInterface, Message: message}
+}
+
+func RegisterMhs(data model.Data_mahasiswa, db *gorm.DB) model.Return {
+	var message string
+	var status bool
+	var password string
+	//var mhsInterface model.Data_mahasiswa
+
+	password = fungsi.ToMd5(data.Password)
+
+	check := db.Where("mhs_id = ? AND tanggal_lahir = ?", data.Mhs_id, data.Tanggal_lahir).Find(&model.Data_mahasiswa{})
+	if check.Error != nil {
+		message = "Akun tidak ditemukan"
+		status = false
+		check.Value = nil
+	} else {
+		message = "Akun anda berhasil Aktif!"
+		status = true
+		setCord, _ := json.Marshal(check.Value)
+		_ = json.Unmarshal(setCord, &data)
+		data.Password = password
+		data.Active = 1
+		data := db.Model(&model.Data_mahasiswa{}).Where("mhs_id = ?", data.Mhs_id).Update(data)
+		if data.Error != nil {
+			message = "Akun anda gagal Aktif!"
+			status = false
+			data.Value = nil
+		} else {
+			message = "Akun anda berhasil Aktif!"
+			status = true
+			data.Value = data.RowsAffected
+		}
+	}
+	return model.Return{Status: status, Data: data, Message: message}
 }

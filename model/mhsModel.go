@@ -1,15 +1,18 @@
 package model
 
-type Data_mahasiswa struct{
-	Mhs_id 			string `json:"mhs_id"`
-	Password 		string `json:"password"`
-	Nama			string	`json:"nama"`
-	Jurusan			string 	`json:"jurusan"`
-	Tahun_masuk 	string	`json:"tahun_masuk"`
-	Tanggal_ditambahkan	string	`json:"tanggal_ditambahkan"`
+import "time"
+
+type Data_mahasiswa struct {
+	Mhs_id        string    `json:"mhs_id"`
+	Nama          string    `json:"nama"`
+	Tempat_lahir  string    `json:"tempat_lahir"`
+	Tanggal_lahir time.Time `json:"tanggal_lahir"`
+	Email         string    `json:"email"`
+	Password      string    `json:"password"`
+	Active        int64     `json:"active"`
 }
 
-type Login struct{
-	Mhs_id			string `json:"mhs_id"`
-	Password		string `json:"password"`
+type Login struct {
+	Mhs_id   string `json:"mhs_id"`
+	Password string `json:"password"`
 }
