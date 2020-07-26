@@ -62,6 +62,12 @@ func main() {
 	userManagement.HandleFunc("/update", controller.UMUpdate).Methods("PUT")
 	userManagement.HandleFunc("/delete/{id}", controller.UMDelete).Methods("DELETE")
 
+	pengembalian := api.PathPrefix("/pengembalian").Subrouter()
+	pengembalian.HandleFunc("/set", controller.SetPengembalian).Methods("POST")
+	pengembalian.HandleFunc("/get", controller.GetPengembalian).Methods("POST")
+	pengembalian.HandleFunc("/admin", controller.SetAdminPengembalian).Methods("POST")
+	pengembalian.HandleFunc("/adminlist", controller.ListPengembalian).Methods("POST")
+
 	log.Println("API STARTED!")
 	_ = http.ListenAndServe(":"+port, handlers.CORS(headers, origins, methods)(r))
 }
