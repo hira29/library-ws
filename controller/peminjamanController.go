@@ -8,6 +8,7 @@ import (
 	"library-ws/fungsi"
 	"library-ws/model"
 	"net/http"
+	"path"
 	"time"
 )
 
@@ -55,4 +56,32 @@ func ViewByIdPeminjaman(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	json.NewEncoder(w).Encode(dao.ViewByIdPeminjaman(params["idPeminjaman"], db))
 	defer db.Close()
+}
+
+func CreateListPeminjamanBerlangsung(w http.ResponseWriter, r *http.Request) {
+	db := config.ConfigSql()
+	var page model.PeminjamanPaging
+	w.Header().Set("Content-Type", "application/json")
+	json.NewDecoder(r.Body).Decode(&page)
+	json.NewEncoder(w).Encode(dao.CreateListPeminjamanBerlangsung(page, db))
+	defer db.Close()
+}
+
+func DownloadListPeminjamanBerlangsung(w http.ResponseWriter, r *http.Request) {
+	fp := path.Join("application", "../DataPeminjamanBerlangsung.xlsx")
+	http.ServeFile(w, r, fp)
+}
+
+func CreateListPeminjamanRiwayat(w http.ResponseWriter, r *http.Request) {
+	db := config.ConfigSql()
+	var page model.PeminjamanPaging
+	w.Header().Set("Content-Type", "application/json")
+	json.NewDecoder(r.Body).Decode(&page)
+	json.NewEncoder(w).Encode(dao.CreateListPeminjamanRiwayat(page, db))
+	defer db.Close()
+}
+
+func DownloadListPeminjamanRiwayat(w http.ResponseWriter, r *http.Request) {
+	fp := path.Join("application", "../DataPeminjamanRiwayat.xlsx")
+	http.ServeFile(w, r, fp)
 }

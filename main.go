@@ -28,6 +28,8 @@ func main() {
 	buku.HandleFunc("/update", controller.UpdateBukuById).Methods("PUT")
 	buku.HandleFunc("/update/stok", controller.UpdateStokById).Methods("POST")
 	buku.HandleFunc("/delete/{bukuId}", controller.DeleteBukuById).Methods("DELETE")
+	buku.HandleFunc("/createlistbuku", controller.CreateListBuku).Methods("POST")
+	buku.HandleFunc("/download", controller.DownloadListBuku).Methods("GET")
 
 	mhs := api.PathPrefix("/data_mhs").Subrouter()
 	mhs.HandleFunc("/create", controller.CreateMhs).Methods("POST")
@@ -37,6 +39,8 @@ func main() {
 	mhs.HandleFunc("/delete/{bukuId}", controller.DeleteMhsById).Methods("DELETE")
 	mhs.HandleFunc("/login", controller.Login).Methods("POST")
 	mhs.HandleFunc("/register", controller.RegisterMhs).Methods("POST")
+	mhs.HandleFunc("/createlistmhs", controller.CreateListMhs).Methods("POST")
+	mhs.HandleFunc("/download", controller.DownloadListMhs).Methods("GET")
 
 	peminjaman := api.PathPrefix("/peminjaman").Subrouter()
 	peminjaman.HandleFunc("/pinjam", controller.Pinjam).Methods("POST")
@@ -44,6 +48,10 @@ func main() {
 	peminjaman.HandleFunc("/berlangsung", controller.Berlangsung).Methods("POST")
 	peminjaman.HandleFunc("/kembali", controller.Kembali).Methods("POST")
 	peminjaman.HandleFunc("/view/{idPeminjaman}", controller.ViewByIdPeminjaman).Methods("GET")
+	peminjaman.HandleFunc("/createlistberlangsung", controller.CreateListPeminjamanBerlangsung).Methods("POST")
+	peminjaman.HandleFunc("/downloadberlangsung", controller.DownloadListPeminjamanBerlangsung).Methods("GET")
+	peminjaman.HandleFunc("/createlistriwayat", controller.CreateListPeminjamanRiwayat).Methods("POST")
+	peminjaman.HandleFunc("/downloadriwayat", controller.DownloadListPeminjamanRiwayat).Methods("GET")
 
 	kategori := api.PathPrefix("/kategori").Subrouter()
 	kategori.HandleFunc("/tambah/{categoryName}", controller.AddCategory).Methods("GET")

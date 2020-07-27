@@ -3,9 +3,13 @@ package fungsi
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"hash/crc32"
+	"library-ws/model"
 	"strconv"
 	"strings"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func ToMd5(string string) string {
@@ -126,4 +130,171 @@ func CategoryParseEngine(Klasifikasi string) string {
 		}
 	}
 	return Category
+}
+
+func Excelsize_Books(Records []model.Data_buku) {
+	f := excelize.NewFile()
+	// Create a new sheet.
+	index := f.NewSheet("Sheet1")
+	// Set value of a cell.
+	// Set active sheet of the workbook.
+	f.SetActiveSheet(index)
+	// Save xlsx file by the given path.
+	f.SetCellValue("Sheet1", "A1", "No.")
+	f.SetCellValue("Sheet1", "B1", "ID Buku")
+	f.SetCellValue("Sheet1", "C1", "Judul")
+	f.SetCellValue("Sheet1", "D1", "Edisi")
+	f.SetCellValue("Sheet1", "E1", "Pengarang")
+	f.SetCellValue("Sheet1", "F1", "Kota Terbit")
+	f.SetCellValue("Sheet1", "G1", "Penerbit")
+	f.SetCellValue("Sheet1", "H1", "Tahun Terbit")
+	f.SetCellValue("Sheet1", "I1", "ISBN")
+	f.SetCellValue("Sheet1", "J1", "Klasifikasi")
+	f.SetCellValue("Sheet1", "K1", "Kategori")
+	f.SetCellValue("Sheet1", "L1", "Umum/Res")
+	f.SetCellValue("Sheet1", "M1", "Bahasa")
+	f.SetCellValue("Sheet1", "N1", "Deskripsi")
+	f.SetCellValue("Sheet1", "O1", "Lokasi")
+	f.SetCellValue("Sheet1", "P1", "Tanggal Ditambahkan")
+	f.SetCellValue("Sheet1", "Q1", "Stok")
+
+	for i, records := range Records {
+		num := strconv.Itoa(i + 2)
+		f.SetCellValue("Sheet1", "A"+num, strconv.Itoa(i+1))
+		f.SetCellValue("Sheet1", "B"+num, records.Buku_id)
+		f.SetCellValue("Sheet1", "C"+num, records.Judul)
+		f.SetCellValue("Sheet1", "D"+num, records.Edisi)
+		f.SetCellValue("Sheet1", "E"+num, records.Pengarang)
+		f.SetCellValue("Sheet1", "F"+num, records.Kota_terbit)
+		f.SetCellValue("Sheet1", "G"+num, records.Penerbit)
+		f.SetCellValue("Sheet1", "H"+num, records.Tahun_Terbit)
+		f.SetCellValue("Sheet1", "I"+num, records.Isbn)
+		f.SetCellValue("Sheet1", "J"+num, records.Klasifikasi)
+		f.SetCellValue("Sheet1", "K"+num, records.Kategori)
+		f.SetCellValue("Sheet1", "L"+num, records.Umum_res)
+		f.SetCellValue("Sheet1", "M"+num, records.Bahasa)
+		f.SetCellValue("Sheet1", "N"+num, records.Deskripsi)
+		f.SetCellValue("Sheet1", "O"+num, records.Lokasi)
+		f.SetCellValue("Sheet1", "P"+num, records.Tanggal_ditambahkan)
+		f.SetCellValue("Sheet1", "Q"+num, records.Stok)
+	}
+
+	if err := f.SaveAs("DataBooks.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+func Excelsize_Mhs(Records []model.Data_mahasiswa) {
+	f := excelize.NewFile()
+	// Create a new sheet.
+	index := f.NewSheet("Sheet1")
+	// Set value of a cell.
+	// Set active sheet of the workbook.
+	f.SetActiveSheet(index)
+	// Save xlsx file by the given path.
+	f.SetCellValue("Sheet1", "A1", "No.")
+	f.SetCellValue("Sheet1", "B1", "ID Mahasiswa")
+	f.SetCellValue("Sheet1", "C1", "Nama")
+	f.SetCellValue("Sheet1", "D1", "Email")
+	f.SetCellValue("Sheet1", "E1", "Password")
+	f.SetCellValue("Sheet1", "F1", "Tempat Lahir")
+	f.SetCellValue("Sheet1", "G1", "Tanggal Lahir")
+	f.SetCellValue("Sheet1", "H1", "Aktif")
+
+	for i, records := range Records {
+		num := strconv.Itoa(i + 2)
+		f.SetCellValue("Sheet1", "A"+num, strconv.Itoa(i+1))
+		f.SetCellValue("Sheet1", "B"+num, records.Mhs_id)
+		f.SetCellValue("Sheet1", "C"+num, records.Nama)
+		f.SetCellValue("Sheet1", "D"+num, records.Email)
+		f.SetCellValue("Sheet1", "E"+num, records.Password)
+		f.SetCellValue("Sheet1", "F"+num, records.Tempat_lahir)
+		f.SetCellValue("Sheet1", "G"+num, records.Tanggal_lahir)
+		f.SetCellValue("Sheet1", "H"+num, records.Active)
+	}
+
+	if err := f.SaveAs("DataMhs.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+func Excelsize_PeminjamanBerlangsung(RecordsMhs model.Data_mahasiswa, Records []model.Data_peminjaman) {
+	f := excelize.NewFile()
+	// Create a new sheet.
+	index := f.NewSheet("Sheet1")
+	// Set value of a cell.
+	// Set active sheet of the workbook.
+	f.SetActiveSheet(index)
+	// Save xlsx file by the given path.
+	f.SetCellValue("Sheet1", "A1", "ID")
+	f.SetCellValue("Sheet1", "A2", "Nama")
+	f.SetCellValue("Sheet1", "A3", "Email")
+	f.SetCellValue("Sheet1", "B1", RecordsMhs.Mhs_id)
+	f.SetCellValue("Sheet1", "B2", RecordsMhs.Nama)
+	f.SetCellValue("Sheet1", "B3", RecordsMhs.Email)
+
+	f.SetCellValue("Sheet1", "A5", "No.")
+	f.SetCellValue("Sheet1", "B5", "ID Peminjaman")
+	f.SetCellValue("Sheet1", "C5", "Id Buku")
+	f.SetCellValue("Sheet1", "D5", "Judul Buku")
+	f.SetCellValue("Sheet1", "E5", "Tanggal Peminjaman")
+	f.SetCellValue("Sheet1", "F5", "Tanggal Pengembalian")
+	f.SetCellValue("Sheet1", "G5", "Tanggal Kembali")
+
+	for i, records := range Records {
+		num := strconv.Itoa(i + 6)
+		f.SetCellValue("Sheet1", "A"+num, strconv.Itoa(i+1))
+		f.SetCellValue("Sheet1", "B"+num, records.Id_peminjaman)
+		f.SetCellValue("Sheet1", "C"+num, records.Id_buku)
+		f.SetCellValue("Sheet1", "D"+num, records.Judul_buku)
+		f.SetCellValue("Sheet1", "F"+num, records.Tanggal_peminjaman)
+		f.SetCellValue("Sheet1", "G"+num, records.Tanggal_pengembalian)
+		f.SetCellValue("Sheet1", "H"+num, records.Tanggal_kembali)
+	}
+
+	if err := f.SaveAs("DataPeminjamanBerlangsung.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func Excelsize_PeminjamanRiwayat(RecordsMhs model.Data_mahasiswa, Records []model.Riwayat_peminjaman) {
+	f := excelize.NewFile()
+	// Create a new sheet.
+	index := f.NewSheet("Sheet1")
+	// Set value of a cell.
+	// Set active sheet of the workbook.
+	f.SetActiveSheet(index)
+	// Save xlsx file by the given path.
+	f.SetCellValue("Sheet1", "A1", "ID")
+	f.SetCellValue("Sheet1", "A2", "Nama")
+	f.SetCellValue("Sheet1", "A3", "Email")
+	f.SetCellValue("Sheet1", "B1", RecordsMhs.Mhs_id)
+	f.SetCellValue("Sheet1", "B2", RecordsMhs.Nama)
+	f.SetCellValue("Sheet1", "B3", RecordsMhs.Email)
+
+	f.SetCellValue("Sheet1", "A5", "No.")
+	f.SetCellValue("Sheet1", "B5", "ID Peminjaman")
+	f.SetCellValue("Sheet1", "C5", "Id Buku")
+	f.SetCellValue("Sheet1", "D5", "Judul Buku")
+	f.SetCellValue("Sheet1", "E5", "Tanggal Peminjaman")
+	f.SetCellValue("Sheet1", "F5", "Tanggal Pengembalian")
+	f.SetCellValue("Sheet1", "G5", "Tanggal Kembali")
+
+	for i, records := range Records {
+		num := strconv.Itoa(i + 6)
+		f.SetCellValue("Sheet1", "A"+num, strconv.Itoa(i+1))
+		f.SetCellValue("Sheet1", "B"+num, records.Id_peminjaman)
+		f.SetCellValue("Sheet1", "C"+num, records.Id_buku)
+		f.SetCellValue("Sheet1", "D"+num, records.Judul_buku)
+		f.SetCellValue("Sheet1", "F"+num, records.Tanggal_peminjaman)
+		f.SetCellValue("Sheet1", "G"+num, records.Tanggal_pengembalian)
+		f.SetCellValue("Sheet1", "H"+num, records.Tanggal_kembali)
+	}
+
+	if err := f.SaveAs("DataPeminjamanRiwayat.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
 }

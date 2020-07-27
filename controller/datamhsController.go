@@ -8,6 +8,7 @@ import (
 	"library-ws/fungsi"
 	"library-ws/model"
 	"net/http"
+	"path"
 	"time"
 )
 
@@ -76,4 +77,18 @@ func RegisterMhs(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&Register)
 	json.NewEncoder(w).Encode(dao.RegisterMhs(Register, db))
 	defer db.Close()
+}
+
+func CreateListMhs(w http.ResponseWriter, r *http.Request) {
+	db := config.ConfigSql()
+	var page model.Paging
+	w.Header().Set("Content-Type", "application/json")
+	json.NewDecoder(r.Body).Decode(&page)
+	json.NewEncoder(w).Encode(dao.CreateListMhs(page, db))
+	defer db.Close()
+}
+
+func DownloadListMhs(w http.ResponseWriter, r *http.Request) {
+	fp := path.Join("application", "../DataMhs.xlsx")
+	http.ServeFile(w, r, fp)
 }

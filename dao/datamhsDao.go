@@ -203,3 +203,47 @@ func RegisterMhs(data model.Data_mahasiswa, db *gorm.DB) model.Return {
 	}
 	return model.Return{Status: status, Data: data, Message: message}
 }
+
+func CreateListMhs(page model.Paging, db *gorm.DB) model.Return {
+	var message string
+	var status bool
+	var data_mahasiswas []model.Data_mahasiswa
+	var Records []model.Data_mahasiswa
+	var DataBase *gorm.DB
+
+	data := db.Find(&model.Data_mahasiswa{})
+	if data.Error != nil {
+		message = "Data Gagal Ditemukan"
+		status = false
+		data.Value = nil
+	} else {
+		message = "Data Berhasil Ditemukan"
+		status = true
+	}
+
+	if page.Search == "" {
+		DataBase = db
+	} else {
+		DataBase = db.Where("nama LIKE ? OR mhs_id LIKE ?", "%"+page.Search+"%", "%"+page.Search+"%")
+	}
+
+	paginator := pagination.Paging(&pagination.Param{
+		DB:      DataBase,
+		Page:    page.Page,
+		Limit:   page.Size,
+		ShowSQL: true,
+	}, &data_mahasiswas)
+
+	getRecords, _ := json.Marshal(paginator.Records)
+	_ = json.Unmarshal(getRecords, &Records)
+
+	var UpdatedRecords []model.Data_mahasiswa
+	for _, records := range Records {
+		records.Password = "AuthGuard Protected!"
+		UpdatedRecords = append(UpdatedRecords, records)
+	}
+
+	fungsi.Excelsize_Mhs(UpdatedRecords)
+
+	return model.Return{Status: status, Data: UpdatedRecords, Message: message}
+}
