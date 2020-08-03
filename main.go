@@ -20,6 +20,8 @@ func main() {
 	origins := handlers.AllowedOrigins([]string{"*"})
 	methods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
 
+	r.HandleFunc("/perpustakaan", controller.MainAPI).Methods("GET")
+
 	api := r.PathPrefix("/perpustakaan/api/v1").Subrouter()
 	buku := api.PathPrefix("/data_buku").Subrouter()
 	buku.HandleFunc("/create", controller.CreateBuku).Methods("POST")
