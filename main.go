@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"library-ws/controller"
+	"os"
 
 	//httpSwagger "github.com/swaggo/http-swagger"
 	"log"
@@ -11,8 +13,10 @@ import (
 )
 
 func main() {
-	port := "6996"
+	port := os.Getenv("PORT")
 	r := mux.NewRouter()
+
+	fmt.Println(port)
 
 	headers := handlers.AllowedHeaders([]string{
 		"X-Requested-With", "Accept", "Authorization", "Content-Type", "X-CSRF-Token",
