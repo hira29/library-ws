@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"library-ws/controller"
@@ -15,8 +14,6 @@ import (
 func main() {
 	port := os.Getenv("PORT")
 	r := mux.NewRouter()
-
-	fmt.Println(port)
 
 	headers := handlers.AllowedHeaders([]string{
 		"X-Requested-With", "Accept", "Authorization", "Content-Type", "X-CSRF-Token",
@@ -36,6 +33,11 @@ func main() {
 	buku.HandleFunc("/delete/{bukuId}", controller.DeleteBukuById).Methods("DELETE")
 	buku.HandleFunc("/createlistbuku", controller.CreateListBuku).Methods("POST")
 	buku.HandleFunc("/download", controller.DownloadListBuku).Methods("GET")
+
+	rating := buku.PathPrefix("/rating").Subrouter()
+	rating.HandleFunc("/create", controller.CreateRating).Methods("POST")
+	rating.HandleFunc("/list", controller.ListRating).Methods("POST")
+	//rating.HandleFunc("/delete/{bukuId}", controller.DeleteRating)
 
 	mhs := api.PathPrefix("/data_mhs").Subrouter()
 	mhs.HandleFunc("/create", controller.CreateMhs).Methods("POST")
@@ -83,5 +85,6 @@ func main() {
 	pengembalian.HandleFunc("/adminlist", controller.ListPengembalian).Methods("POST")
 
 	log.Println("API STARTED!")
+	log.Println(port)
 	_ = http.ListenAndServe(":"+port, handlers.CORS(headers, origins, methods)(r))
 }
