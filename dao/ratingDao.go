@@ -114,7 +114,12 @@ func DeleteRating(id string, db *gorm.DB) model.Return {
 
 		curRating = InterfaceBuku.Rating * result
 		getRating = InterfaceRating.Rating
-		nextRating = (curRating - getRating) / (result - 1)
+		if result-1 == 0 {
+			result = 1
+		} else {
+			result = result - 1
+		}
+		nextRating = (curRating - getRating) / (result)
 		nextRating = math.Ceil(nextRating*10) / 10
 	}
 
