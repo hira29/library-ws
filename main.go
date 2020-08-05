@@ -37,7 +37,9 @@ func main() {
 	rating := buku.PathPrefix("/rating").Subrouter()
 	rating.HandleFunc("/create", controller.CreateRating).Methods("POST")
 	rating.HandleFunc("/list", controller.ListRating).Methods("POST")
-	//rating.HandleFunc("/delete/{bukuId}", controller.DeleteRating)
+	rating.HandleFunc("/delete/{ratingId}", controller.DeleteRating)
+	rating.HandleFunc("/createlistrating", controller.CreateListRating).Methods("POST")
+	rating.HandleFunc("/download", controller.DownloadListRating).Methods("GET")
 
 	mhs := api.PathPrefix("/data_mhs").Subrouter()
 	mhs.HandleFunc("/create", controller.CreateMhs).Methods("POST")

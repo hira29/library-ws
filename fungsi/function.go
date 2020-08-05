@@ -298,3 +298,47 @@ func Excelsize_PeminjamanRiwayat(RecordsMhs model.Data_mahasiswa, Records []mode
 	}
 
 }
+
+func Excelsize_Rating(RecordsBooks model.Data_buku, Records []model.Data_Rating) {
+	f := excelize.NewFile()
+	// Create a new sheet.
+	index := f.NewSheet("Sheet1")
+	// Set value of a cell.
+	// Set active sheet of the workbook.
+	f.SetActiveSheet(index)
+	// Save xlsx file by the given path.
+	f.SetCellValue("Sheet1", "A1", "ID")
+	f.SetCellValue("Sheet1", "A2", "Judul")
+	f.SetCellValue("Sheet1", "A3", "Pengarang")
+	f.SetCellValue("Sheet1", "A4", "Penerbit / Tahun Terbit")
+	f.SetCellValue("Sheet1", "A5", "Rating")
+	f.SetCellValue("Sheet1", "B1", RecordsBooks.Buku_id)
+	f.SetCellValue("Sheet1", "B2", RecordsBooks.Judul)
+	f.SetCellValue("Sheet1", "B3", RecordsBooks.Pengarang)
+	f.SetCellValue("Sheet1", "B4", RecordsBooks.Penerbit+"/"+RecordsBooks.Tahun_Terbit)
+	f.SetCellValue("Sheet1", "B5", RecordsBooks.Rating)
+
+	f.SetCellValue("Sheet1", "A7", "No.")
+	f.SetCellValue("Sheet1", "B7", "ID Rating")
+	f.SetCellValue("Sheet1", "C7", "Nama")
+	f.SetCellValue("Sheet1", "D7", "ID Mhs")
+	f.SetCellValue("Sheet1", "E7", "Rating")
+	f.SetCellValue("Sheet1", "F7", "Komentar")
+	f.SetCellValue("Sheet1", "G7", "Tanggal")
+
+	for i, records := range Records {
+		num := strconv.Itoa(i + 8)
+		f.SetCellValue("Sheet1", "A"+num, strconv.Itoa(i+1))
+		f.SetCellValue("Sheet1", "B"+num, records.Id_Rating)
+		f.SetCellValue("Sheet1", "C"+num, records.Nama)
+		f.SetCellValue("Sheet1", "D"+num, records.Id_Mhs)
+		f.SetCellValue("Sheet1", "F"+num, records.Rating)
+		f.SetCellValue("Sheet1", "G"+num, records.Komentar)
+		f.SetCellValue("Sheet1", "H"+num, records.Tanggal)
+	}
+
+	if err := f.SaveAs("DataBooksRating.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+}
