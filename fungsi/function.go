@@ -288,9 +288,9 @@ func Excelsize_PeminjamanRiwayat(RecordsMhs model.Data_mahasiswa, Records []mode
 		f.SetCellValue("Sheet1", "B"+num, records.Id_peminjaman)
 		f.SetCellValue("Sheet1", "C"+num, records.Id_buku)
 		f.SetCellValue("Sheet1", "D"+num, records.Judul_buku)
-		f.SetCellValue("Sheet1", "F"+num, records.Tanggal_peminjaman)
-		f.SetCellValue("Sheet1", "G"+num, records.Tanggal_pengembalian)
-		f.SetCellValue("Sheet1", "H"+num, records.Tanggal_kembali)
+		f.SetCellValue("Sheet1", "E"+num, records.Tanggal_peminjaman)
+		f.SetCellValue("Sheet1", "F"+num, records.Tanggal_pengembalian)
+		f.SetCellValue("Sheet1", "G"+num, records.Tanggal_kembali)
 	}
 
 	if err := f.SaveAs("DataPeminjamanRiwayat.xlsx"); err != nil {
@@ -332,9 +332,9 @@ func Excelsize_Rating(RecordsBooks model.Data_buku, Records []model.Data_Rating)
 		f.SetCellValue("Sheet1", "B"+num, records.Id_Rating)
 		f.SetCellValue("Sheet1", "C"+num, records.Nama)
 		f.SetCellValue("Sheet1", "D"+num, records.Id_Mhs)
-		f.SetCellValue("Sheet1", "F"+num, records.Rating)
-		f.SetCellValue("Sheet1", "G"+num, records.Komentar)
-		f.SetCellValue("Sheet1", "H"+num, records.Tanggal)
+		f.SetCellValue("Sheet1", "E"+num, records.Rating)
+		f.SetCellValue("Sheet1", "F"+num, records.Komentar)
+		f.SetCellValue("Sheet1", "G"+num, records.Tanggal)
 	}
 
 	if err := f.SaveAs("DataBooksRating.xlsx"); err != nil {
