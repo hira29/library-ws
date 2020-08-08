@@ -47,7 +47,7 @@ func main() {
 	mhs.HandleFunc("/list", controller.ListMhs).Methods("POST")
 	mhs.HandleFunc("/view/{mhsId}", controller.ViewMhsById).Methods("GET")
 	mhs.HandleFunc("/update", controller.UpdateMhsById).Methods("PUT")
-	mhs.HandleFunc("/delete/{bukuId}", controller.DeleteMhsById).Methods("DELETE")
+	mhs.HandleFunc("/delete/{mhsId}", controller.DeleteMhsById).Methods("DELETE")
 	mhs.HandleFunc("/login", controller.Login).Methods("POST")
 	mhs.HandleFunc("/register", controller.RegisterMhs).Methods("POST")
 	mhs.HandleFunc("/createlistmhs", controller.CreateListMhs).Methods("POST")
