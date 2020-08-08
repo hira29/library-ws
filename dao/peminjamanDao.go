@@ -222,7 +222,7 @@ func Riwayat(page model.PeminjamanPaging, db *gorm.DB) model.Return {
 					set["detail_rating"] = nil
 				} else {
 					setRCord, _ := json.Marshal(rating.Value)
-					var ratingInterface model.Data_mahasiswa
+					var ratingInterface model.Data_Rating
 					_ = json.Unmarshal(setRCord, &ratingInterface)
 					set["detail_rating"] = ratingInterface
 				}
