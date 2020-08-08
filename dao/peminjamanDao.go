@@ -85,6 +85,7 @@ func Kembali(Kembali model.Riwayat_peminjaman, db *gorm.DB) model.Return {
 	var status bool
 	datas := make(map[string]interface{})
 	var outputBuku model.Data_buku
+	Kembali.Id_rating = "0"
 
 	dataPinjam := db.Where("id_peminjaman = ?", Kembali.Id_peminjaman).First(&model.Data_peminjaman{})
 	if dataPinjam.Error != nil {
@@ -209,8 +210,22 @@ func Riwayat(page model.PeminjamanPaging, db *gorm.DB) model.Return {
 				var mhsInterface model.Data_mahasiswa
 				_ = json.Unmarshal(setCord, &mhsInterface)
 				mhsInterface.Password = "AuthGuard Protected!"
-				fmt.Print(mhsInterface)
 				set["detail_mhs"] = mhsInterface
+			}
+
+			if records.Id_rating == "0" {
+				set["detail_rating"] = nil
+			} else {
+				rating := db.Where("id_rating = ?", records.Id_rating).First(&model.Data_Rating{})
+				if rating.Error != nil {
+					rating.Value = nil
+					set["detail_rating"] = nil
+				} else {
+					setRCord, _ := json.Marshal(rating.Value)
+					var ratingInterface model.Data_mahasiswa
+					_ = json.Unmarshal(setRCord, &ratingInterface)
+					set["detail_rating"] = ratingInterface
+				}
 			}
 		}
 		UpdatedRecords = append(UpdatedRecords, set)

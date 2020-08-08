@@ -38,6 +38,7 @@ func main() {
 	rating.HandleFunc("/create", controller.CreateRating).Methods("POST")
 	rating.HandleFunc("/list", controller.ListRating).Methods("POST")
 	rating.HandleFunc("/delete/{ratingId}", controller.DeleteRating).Methods("DELETE")
+	rating.HandleFunc("/view/{ratingId}", controller.ViewByRatingId).Methods("GET")
 	rating.HandleFunc("/createlistrating", controller.CreateListRating).Methods("POST")
 	rating.HandleFunc("/download", controller.DownloadListRating).Methods("GET")
 

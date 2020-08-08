@@ -36,6 +36,14 @@ func DeleteRating(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+func ViewByRatingId(w http.ResponseWriter, r *http.Request) {
+	db := config.ConfigSql()
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	json.NewEncoder(w).Encode(dao.ViewByRatingId(params["ratingId"], db))
+	defer db.Close()
+}
+
 func CreateListRating(w http.ResponseWriter, r *http.Request) {
 	db := config.ConfigSql()
 	var page model.Rating_Paging

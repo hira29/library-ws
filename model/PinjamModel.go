@@ -7,6 +7,7 @@ type Riwayat_peminjaman struct {
 	Id_buku              string    `json:"id_buku"`
 	Judul_buku           string    `json:"judul_buku"`
 	Id_mhs               string    `json:"id_mhs"`
+	Id_rating            string    `json:"id_rating"`
 	Tanggal_peminjaman   time.Time `json:"tanggal_peminjaman"`
 	Tanggal_pengembalian time.Time `json:"tanggal_pengembalian"`
 	Tanggal_kembali      time.Time `json:"tanggal_kembali"`

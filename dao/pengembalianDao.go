@@ -14,6 +14,7 @@ func SetAdminPengembalian(Kembali model.Riwayat_peminjaman, db *gorm.DB) model.R
 	var status bool
 	datas := make(map[string]interface{})
 	var outputBuku model.Data_buku
+	Kembali.Id_rating = "0"
 
 	dataPinjam := db.Where("id_peminjaman = ?", Kembali.Id_peminjaman).First(&model.Data_peminjaman{})
 	if dataPinjam.Error != nil {

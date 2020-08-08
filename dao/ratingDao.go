@@ -44,10 +44,11 @@ func CreateRating(Data_Rating model.Data_Rating, db *gorm.DB) model.Return {
 
 		check := db.NewRecord(Data_Rating)
 		if check == true {
-			_ = db.Model(&model.Data_buku{}).Where("buku_id = ?", Data_Rating.Id_Buku).Update(map[string]interface{}{"rating": nextRating})
 			db.Create(&Data_Rating)
 			message = "Data Berhasil Ditambahkan"
 			status = true
+			_ = db.Model(&model.Data_buku{}).Where("buku_id = ?", Data_Rating.Id_Buku).Update(map[string]interface{}{"rating": nextRating})
+			_ = db.Model(&model.Riwayat_peminjaman{}).Where("id_peminjaman = ?", Data_Rating.Id_Peminjaman).Update(map[string]interface{}{"id_rating": Data_Rating.Id_Rating})
 		} else {
 			message = "Data Gagal Ditambahkan"
 			status = false
@@ -135,6 +136,23 @@ func DeleteRating(id string, db *gorm.DB) model.Return {
 		_ = db.Model(&model.Data_buku{}).Where("buku_id = ?", InterfaceRating.Id_Buku).Update(map[string]interface{}{"rating": nextRating})
 	}
 	return model.Return{Status: status, Data: Delete.Value, Message: message}
+}
+
+func ViewByRatingId(id string, db *gorm.DB) model.Return {
+	var message string
+	var status bool
+
+	data := db.Where("id_rating = ?", id).First(&model.Data_Rating{})
+	if data.Error != nil {
+		message = "Data Gagal Ditemukan"
+		status = false
+		data.Value = nil
+	} else {
+		message = "Data Berhasil Ditemukan"
+		status = true
+	}
+
+	return model.Return{Status: status, Data: data.Value, Message: message}
 }
 
 func CreateListRating(page model.Rating_Paging, db *gorm.DB) model.Return {
